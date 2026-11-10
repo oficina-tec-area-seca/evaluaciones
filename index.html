@@ -14,7 +14,7 @@
   --bg:#f7f8fb; --surface:#ffffff; --surface-2:#f2f4f8; --fg:#0f1624; --muted:#606b7d; --line:#e4e7ee;
   --ink:#0f1624; --ink-fg:#ffffff;
   --accent:#2f6bff; --accent-soft:#e8efff; --glow-a:#c9dbff; --glow-b:#d6f5ea;
-  --l1:#16a35b; --l1s:#e3f6ec; --l2:#2f6bff; --l2s:#e8efff; --l3:#d98a00; --l3s:#fdf2dc; --l4:#dc3d2e; --l4s:#fce6e3;
+  --l1:#16a35b; --l1s:#e3f6ec; --l2:#2f6bff; --l2s:#e8efff; --l3:#d98a00; --l3s:#fdf2dc; --l4:#dc3d2e; --l4s:#fce6e3; --r1:#e2662a; --r3:#4f9f33;
   --shadow:0 1px 2px rgba(15,22,36,.04),0 8px 24px rgba(15,22,36,.06);
   --display:"Inter Tight","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   --body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -23,13 +23,13 @@
   --bg:#0b0f17; --surface:#131925; --surface-2:#1a2130; --fg:#e8ecf3; --muted:#98a2b3; --line:#252d3c;
   --ink:#e8ecf3; --ink-fg:#0b0f17;
   --accent:#6d9bff; --accent-soft:#18233b; --glow-a:#1c2c52; --glow-b:#12352a;
-  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916;
+  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916; --r1:#f2884f; --r3:#7fcb5c;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#0b0f17; --surface:#131925; --surface-2:#1a2130; --fg:#e8ecf3; --muted:#98a2b3; --line:#252d3c;
   --ink:#e8ecf3; --ink-fg:#0b0f17;
   --accent:#6d9bff; --accent-soft:#18233b; --glow-a:#1c2c52; --glow-b:#12352a;
-  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916;
+  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916; --r1:#f2884f; --r3:#7fcb5c;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark;}
 
 *{box-sizing:border-box}
@@ -89,15 +89,26 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px soli
 .bar{height:6px;border-radius:99px;background:var(--surface-2);margin:14px 0 4px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;border-radius:99px;background:var(--accent);transition:width .25s ease}
 .items{list-style:none;margin:0;padding:0}
+.item{padding:14px 0;border:0;margin:0;min-width:0}
 .item+.item{border-top:1px solid var(--line)}
-.item label{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;padding:13px 2px;cursor:pointer}
-.item input{position:absolute;opacity:0;pointer-events:none}
-.box{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface-2);display:grid;place-items:center;transition:background .15s,border-color .15s}
-.box svg{width:15px;height:15px;opacity:0;stroke:#fff}
-.item input:checked+.box{background:var(--accent);border-color:var(--accent)}
-.item input:checked+.box svg{opacity:1}
-.item input:focus-visible+.box{outline:2px solid var(--accent);outline-offset:2px}
-.txt{font-size:15px;padding-top:2px}
+.item.flag .q::before{content:"Sin responder · ";color:var(--l4);font-weight:600;font-size:13px}
+.q{font-size:15px;margin-bottom:10px;padding:0}
+.seg{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:4px}
+.seg label{position:relative;display:block;min-width:0}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:46px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);text-align:center;line-height:1.15;cursor:pointer;padding:4px 2px;transition:background .15s,color .15s}
+.seg span small{font-size:10.5px;font-weight:500;opacity:.85;font-variant-numeric:tabular-nums}
+.seg label:hover span{background:var(--surface)}
+.seg input:checked+span{background:var(--r);color:#fff}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:1px}
+.r0{--r:var(--l4)} .r1{--r:var(--r1)} .r2{--r:var(--l3)} .r3{--r:var(--r3)} .r4{--r:var(--l1)} .r5{--r:var(--muted)}
+.seg .na span{border:1px dashed var(--line)}
+.seg .na input:checked+span{border-color:transparent}
+.item.isna .q{color:var(--muted)}
+.rt{display:inline-block;font-size:11.5px;font-weight:700;color:#fff;background:var(--r);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;background:var(--r)}
 .req{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--l3);background:var(--l3s);border-radius:6px;padding:1px 6px;vertical-align:1px}
 
 /* Resultado */
@@ -137,6 +148,9 @@ footer{color:var(--muted);font-size:13px;padding-block:0 32px}
 @media (max-width:560px){
   .ladder{grid-template-columns:repeat(2,minmax(0,1fr))}
   .fields{grid-template-columns:1fr}
+  .seg{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .seg .na{grid-column:1/-1}
+  .seg .na span{min-height:34px;flex-direction:row;gap:6px}
   .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
   .stat .v{font-size:22px}
   .rec{grid-template-columns:36px minmax(0,1fr)}
@@ -161,15 +175,16 @@ footer{color:var(--muted);font-size:13px;padding-block:0 32px}
   <header class="hero">
     <span class="badge"><i></i>Evaluación de desempeño en terreno</span>
     <h1>¿Está listo para subir de cargo?</h1>
-    <p>Escriba el nombre, marque lo que el trabajador cumple hoy y la evaluación entrega su nivel, una reflexión de cómo es y lo que le falta. Al terminar se descarga en PDF.</p>
+    <p>Escriba el nombre, califique cada punto de Nada a Muy bien y la evaluación entrega su nivel, una reflexión de cómo es y lo que le falta. Al terminar se descarga en PDF.</p>
   </header>
 
 <main>
   <section class="card">
-    <div class="dash-head"><div><div class="kicker">Escala</div><h2>Las 4 etapas</h2></div><span class="chip" id="dashChip">0 de 27 puntos</span></div>
+    <div class="dash-head"><div><div class="kicker">Escala</div><h2>Las 4 etapas</h2></div><span class="chip" id="dashChip">0 de 27 respondidas</span></div>
     <div class="ladder" id="ladder"></div>
     <div class="meter"><i id="meter"></i></div>
     <div class="meter-lbl"><span>0%</span><span>40%</span><span>65%</span><span>85%</span><span>100%</span></div>
+    <div class="legend" id="legend"></div>
   </section>
 
   <section class="card">
@@ -182,7 +197,7 @@ footer{color:var(--muted);font-size:13px;padding-block:0 32px}
     </div>
   </section>
 
-  <div class="kicker" style="margin-top:6px">Paso 2 · Marque lo que cumple</div>
+  <div class="kicker" style="margin-top:6px">Paso 2 · Califique cada punto</div>
   <div id="areas" style="display:flex;flex-direction:column;gap:18px"></div>
 
   <section class="card" id="resultado">
@@ -209,11 +224,14 @@ footer{color:var(--muted);font-size:13px;padding-block:0 32px}
 
 <script>
 const LEVELS={
-  1:{t:"Preparado para subir de cargo",d:"85% o más y todos los puntos clave"},
-  2:{t:"Buen elemento, pero aún falta",d:"65% a 84%, o le falta un punto clave"},
+  1:{t:"Preparado para subir de cargo",d:"85% o más y todos los puntos clave en Bien o Muy bien"},
+  2:{t:"Buen elemento, pero aún falta",d:"65% a 84%, o algún punto clave bajo Bien"},
   3:{t:"Lo intenta, pero aún falta",d:"40% a 64%"},
   4:{t:"Falta esforzarse",d:"Menos de 40%"}
 };
+const RATES=[{t:"Nada",p:0},{t:"Muy poco",p:25},{t:"Poco",p:50},{t:"Bien",p:75},{t:"Muy bien",p:100}];
+const MEETS=3; /* desde "Bien" se considera cumplido */
+const NA=5;    /* "No aplica": no suma ni resta */
 const AREAS=[
  {id:"act",t:"Actitud: vocación, empatía y compromiso",d:"Cómo se para frente al trabajo y a sus compañeros.",
   fuerte:"es una persona comprometida, con vocación y buena disposición con sus compañeros",
@@ -252,51 +270,69 @@ $("areas").innerHTML=AREAS.map(a=>`
  <section class="card">
   <div class="area-head"><div class="meta"><h2>${a.t}</h2><p class="hint">${a.d}</p></div><span class="chip" id="sc-${a.id}">0/${a.items.length}</span></div>
   <div class="bar"><i id="bar-${a.id}"></i></div>
-  <ul class="items">${a.items.map((it,i)=>`<li class="item"><label for="c-${a.id}-${i}"><input type="checkbox" id="c-${a.id}-${i}"><span class="box">${check}</span><span class="txt">${it[0]}${it[1]?'<span class="req">Clave</span>':''}</span></label></li>`).join("")}</ul>
+  <div class="items">${a.items.map((it,i)=>{const q=`c-${a.id}-${i}`;return `<fieldset class="item" id="f-${q}"><legend class="q">${it[0]}${it[1]?'<span class="req">Clave</span>':''}</legend>
+   <div class="seg">${RATES.map((r,v)=>`<label class="r${v}"><input type="radio" name="${q}" id="${q}-${v}" value="${v}"><span>${r.t}<small>${r.p}%</small></span></label>`).join("")}<label class="r5 na"><input type="radio" name="${q}" id="${q}-${NA}" value="${NA}"><span>No aplica<small>no cuenta</small></span></label></div></fieldset>`}).join("")}</div>
  </section>`).join("");
+$("legend").innerHTML=RATES.map((r,v)=>`<span class="r${v}"><i></i>${r.t} ${r.p}%</span>`).join("")+`<span class="r5"><i></i>No aplica: no cuenta</span>`;
 
 function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function fmtDate(f){if(!f)return"";const[y,m,d]=f.split("-");return d+"-"+m+"-"+y}
-function readForm(){const checks={};document.querySelectorAll('.item input').forEach(c=>{if(c.checked)checks[c.id]=true});
-  return{nombre:$("nombre").value.trim(),cargo:$("cargo").value.trim(),fecha:$("fecha").value,obs:$("obs").value.trim(),checks}}
+function readForm(){const vals={};document.querySelectorAll('.seg input:checked').forEach(c=>{vals[c.name]=+c.value});
+  return{nombre:$("nombre").value.trim(),cargo:$("cargo").value.trim(),fecha:$("fecha").value,obs:$("obs").value.trim(),vals}}
 function writeForm(s){$("nombre").value=s.nombre||"";$("cargo").value=s.cargo||"";$("fecha").value=s.fecha||today();$("obs").value=s.obs||"";
-  document.querySelectorAll('.item input').forEach(c=>c.checked=!!(s.checks&&s.checks[c.id]))}
+  const v=valsOf(s);document.querySelectorAll('.seg input').forEach(c=>c.checked=v[c.name]===+c.value)}
+/* Compatibilidad con evaluaciones antiguas de Sí/No */
+function valsOf(s){if(s.vals)return s.vals;const v={};if(s.checks)Object.keys(s.checks).forEach(k=>{if(s.checks[k])v[k]=4});return v}
 
-/* Cada punto vale 1; los puntos clave valen 2 */
+/* Cada punto aporta su porcentaje (Nada 0% … Muy bien 100%); los puntos clave pesan el doble */
 function evaluate(s){
-  let pts=0,max=0,total=0;const areas=[],missing=[];
-  AREAS.forEach(a=>{let ap=0,am=0,ok=0;
-    a.items.forEach((it,i)=>{const w=it[1]?2:1,on=!!s.checks["c-"+a.id+"-"+i];am+=w;if(on){ap+=w;ok++;total++}else missing.push({t:it[0],crit:!!it[1],area:a.id})});
-    pts+=ap;max+=am;areas.push({...a,ok,n:a.items.length,pct:Math.round(ap/am*100)})});
-  const pct=Math.round(pts/max*100),critMiss=missing.filter(m=>m.crit);
+  const vals=valsOf(s);let pts=0,max=0,total=0,critTotal=0,naCount=0;const areas=[],missing=[];
+  AREAS.forEach(a=>{let ap=0,am=0,ok=0,n=0;
+    a.items.forEach((it,i)=>{const w=it[1]?2:1,v=vals["c-"+a.id+"-"+i];
+      if(v!==undefined)total++;
+      if(v===NA){naCount++;return}          /* No aplica: fuera del cálculo */
+      am+=w;n++;if(it[1])critTotal++;
+      if(v!==undefined)ap+=w*RATES[v].p/100;
+      if(v!==undefined&&v>=MEETS)ok++;else missing.push({t:it[0],crit:!!it[1],area:a.id,v})});
+    pts+=ap;max+=am;areas.push({...a,ok,n,pct:am?Math.round(ap/am*100):null})});
+  const pct=max?Math.round(pts/max*100):0,critMiss=missing.filter(m=>m.crit);
   const level=pct>=85?(critMiss.length?2:1):pct>=65?2:pct>=40?3:4;
-  return{pct,level,areas,missing,critMiss,total};
+  return{pct,level,areas,missing,critMiss,critTotal,naCount,total,scored:total-naCount};
 }
+const rateTxt=v=>v===undefined?"Sin responder":v===NA?"No aplica":RATES[v].t;
+const pctTxt=p=>p===null?"No aplica":p+"%";
+/* Primero los puntos clave, y dentro de cada grupo los peor calificados */
+const sortMiss=m=>[...m].sort((a,b)=>(b.crit-a.crit)||((a.v??-1)-(b.v??-1)));
 function joinY(arr){return arr.length<2?arr.join(""):arr.slice(0,-1).join(", ")+" y "+arr[arr.length-1]}
 function lc(t){return t.charAt(0).toLowerCase()+t.slice(1)}
 
 /* Reflexión automática: cómo es, por qué está en ese nivel, qué le falta */
 function reflexion(s,r){
   const nom=s.nombre||"El trabajador";
-  const sorted=[...r.areas].sort((a,b)=>b.pct-a.pct);
+  const sorted=r.areas.filter(a=>a.pct!==null).sort((a,b)=>b.pct-a.pct);
   const strong=sorted.filter(a=>a.pct>=75), weak=sorted.filter(a=>a.pct<50).reverse();
   const P=[];
+  if(!sorted.length)return[`Todos los puntos se marcaron como No aplica, así que no hay base para evaluar a ${nom}.`];
   // 1. Cómo es
   if(strong.length){
-    P.push(`${nom} ${strong.slice(0,2).map(a=>a.fuerte).join(", y además ")}. Sus áreas más fuertes son ${joinY(strong.slice(0,3).map(a=>lc(a.t.split(":")[0])))}.`);
+    const fs=strong.slice(0,3).map(a=>lc(a.t.split(":")[0]));
+    P.push(`${nom} ${strong.slice(0,2).map(a=>a.fuerte).join(", y además ")}. ${fs.length===1?"Su área más fuerte es "+fs[0]:"Sus áreas más fuertes son "+joinY(fs)}.`);
   }else{
     P.push(`${nom} todavía no destaca con claridad en ninguna de las áreas evaluadas; su mejor resultado está en ${lc(sorted[0].t.split(":")[0])} (${sorted[0].pct}%).`);
   }
   // 2. Por qué está en ese nivel
-  const weakNames=weak.map(a=>lc(a.t.split(":")[0]));
-  if(r.level===1) P.push(`Está en el nivel 1 porque cumple el ${r.pct}% de la evaluación y todos los puntos clave. Tiene la base técnica, la actitud y la capacidad de guiar a otros que se espera para asumir más responsabilidad.`);
-  else if(r.level===2&&r.pct>=85) P.push(`Su puntaje es alto (${r.pct}%), pero queda en el nivel 2 porque le ${r.critMiss.length===1?"falta un punto clave":"faltan "+r.critMiss.length+" puntos clave"}: ${joinY(r.critMiss.map(m=>lc(m.t.split(":")[0])))}. Sin eso no está listo para subir de cargo.`);
-  else if(r.level===2) P.push(`Está en el nivel 2 (${r.pct}%) porque cumple la mayor parte de lo evaluado, pero ${weakNames.length?"sus resultados en "+joinY(weakNames)+" bajan el promedio":"todavía le faltan algunos puntos en varias áreas"}${r.critMiss.length?" y le faltan "+r.critMiss.length+" puntos clave":""}.`);
-  else if(r.level===3) P.push(`Está en el nivel 3 (${r.pct}%) porque tiene una base y muestra intención, pero aún hay vacíos importantes${weakNames.length?" en "+joinY(weakNames):""}. Le faltan ${r.critMiss.length} de los 11 puntos clave.`);
+  const weakNames=weak.slice(0,3).map(a=>lc(a.t.split(":")[0]));
+  if(r.level===1) P.push(`Está en el nivel 1 porque alcanza el ${r.pct}% de la evaluación y todos los puntos clave están en Bien o Muy bien. Tiene la base técnica, la actitud y la capacidad de guiar a otros que se espera para asumir más responsabilidad.`);
+  else if(r.level===2&&r.pct>=85) P.push(`Su puntaje es alto (${r.pct}%), pero queda en el nivel 2 porque ${r.critMiss.length===1?"un punto clave sigue":r.critMiss.length+" puntos clave siguen"} bajo Bien: ${joinY(r.critMiss.map(m=>lc(m.t.split(":")[0])+" ("+lc(rateTxt(m.v))+")"))}. Mientras no llegue a Bien en esos puntos, no está listo para subir de cargo.`);
+  else if(r.level===2) P.push(`Está en el nivel 2 (${r.pct}%) porque cumple la mayor parte de lo evaluado, pero ${weakNames.length?"sus resultados en "+joinY(weakNames)+" bajan el promedio":"todavía le faltan algunos puntos en varias áreas"}${r.critMiss.length?", y "+r.critMiss.length+(r.critMiss.length===1?" punto clave sigue":" puntos clave siguen")+" bajo Bien":""}.`);
+  else if(r.level===3) P.push(`Está en el nivel 3 (${r.pct}%) porque tiene una base y muestra intención, pero aún hay vacíos importantes${weakNames.length?" en "+joinY(weakNames):""}. ${r.critMiss.length} de los ${r.critTotal} puntos clave que le aplican todavía están bajo Bien.`);
   else P.push(`Está en el nivel 4 (${r.pct}%) porque cumple pocos de los puntos evaluados${weakNames.length?", sobre todo en "+joinY(weakNames):""}. Hoy necesita demostrar más compromiso y esfuerzo antes de pensar en un cambio de cargo.`);
   // 3. Qué le falta
+  if(r.naCount) P.push(`${r.naCount===1?"Un punto se marcó":r.naCount+" puntos se marcaron"} como No aplica por el tipo de trabajo que realiza, y no se consideraron en el porcentaje.`);
   if(r.level===1) P.push(`Recomendación: darle la oportunidad de subir de cargo, con seguimiento las primeras semanas.`);
-  else{
+  else if(!weak.length&&sorted[0].pct===sorted[sorted.length-1].pct){
+    P.push(`Para avanzar, no tiene un punto débil marcado: necesita pasar de ${sorted[0].pct>=75?"Bien a Muy bien":"lo básico a Bien"} en varias áreas, haciendo lo que ya sabe con más autonomía y constancia.`);
+  }else{
     const foco=(weak.length?weak:sorted.slice(-2).reverse()).slice(0,2);
     P.push(`Para avanzar, lo más importante es ${foco.map(a=>a.falta).join("; además, ")}.`);
   }
@@ -311,23 +347,25 @@ function render(){
   $("liveN").textContent=started?r.level:"–";
   $("livePct").textContent=started?"Nivel "+r.level+" · "+r.pct+"%":"Sin marcar";
   $("meter").style.width=r.pct+"%";
-  $("dashChip").textContent=r.total+" de "+TOTAL+" puntos";
+  $("dashChip").textContent=r.total+" de "+TOTAL+" respondidas";
   [1,2,3,4].forEach(n=>$("step"+n).classList.toggle("on",started&&n===r.level));
-  r.areas.forEach(a=>{$("sc-"+a.id).textContent=a.ok+"/"+a.n;$("bar-"+a.id).style.width=a.pct+"%"});
-  if(!started){$("resCard").innerHTML='<p class="empty">Marque los puntos que el trabajador cumple. Aquí aparecerá su nivel, el detalle por área, una reflexión de cómo es y lo que le falta.</p>'}
+  r.areas.forEach(a=>{$("sc-"+a.id).textContent=pctTxt(a.pct);$("bar-"+a.id).style.width=(a.pct||0)+"%"});
+  const vals=s.vals;document.querySelectorAll('.item').forEach(f=>{const v=vals[f.id.slice(2)];if(v!==undefined)f.classList.remove("flag");f.classList.toggle("isna",v===NA)});
+  if(!started){$("resCard").innerHTML='<p class="empty">Califique cada punto de Nada a Muy bien. Aquí aparecerá su nivel, el detalle por área, una reflexión de cómo es y lo que le falta.</p>'}
   else{
     $("resCard").innerHTML=`
      <div class="stats">
       <div class="stat"><div class="v" style="color:var(--lv)">${r.level}</div><div class="k">Nivel</div></div>
       <div class="stat"><div class="v">${r.pct}%</div><div class="k">Cumplimiento</div></div>
-      <div class="stat"><div class="v">${11-r.critMiss.length}/11</div><div class="k">Puntos clave</div></div>
+      <div class="stat"><div class="v">${r.critTotal-r.critMiss.length}/${r.critTotal}</div><div class="k">Clave en Bien o más</div></div>
      </div>
      <div class="verdict"><div class="lvl">Nivel ${r.level}</div><h3>${LEVELS[r.level].t}</h3></div>
      <div class="sub">Reflexión</div>
      <div class="reflex">${reflexion(s,r).map(p=>`<p>${esc(p)}</p>`).join("")}</div>
      <div class="sub">Por área</div>
-     <div class="breakdown">${r.areas.map(a=>`<div class="brow"><span>${a.t}</span><em>${a.pct}%</em><div class="bar"><i style="width:${a.pct}%"></i></div></div>`).join("")}</div>
-     ${r.missing.length?`<div class="sub">Lo que le falta (${r.missing.length})</div><ul class="missing">${r.missing.filter(m=>m.crit).map(m=>`<li><b>${m.t}</b> <span class="req">Clave</span></li>`).join("")}${r.missing.filter(m=>!m.crit).map(m=>`<li>${m.t}</li>`).join("")}</ul>`:`<div class="sub">Cumple todos los puntos evaluados.</div>`}`;
+     <div class="breakdown">${r.areas.map(a=>`<div class="brow"><span>${a.t}</span><em>${pctTxt(a.pct)}</em><div class="bar"><i style="width:${a.pct||0}%"></i></div></div>`).join("")}</div>
+     ${r.naCount?`<p class="hint" style="margin-top:8px">${r.naCount} ${r.naCount===1?"punto marcado":"puntos marcados"} como No aplica, fuera del cálculo.</p>`:""}
+     ${r.missing.length?`<div class="sub">Lo que le falta reforzar (${r.missing.length})</div><p class="hint">Puntos calificados bajo Bien.</p><ul class="missing">${sortMiss(r.missing).map(m=>`<li>${m.crit?`<b>${m.t}</b> <span class="req">Clave</span>`:m.t}${m.v===undefined?'<span class="rt" style="--r:var(--muted)">Sin responder</span>':`<span class="rt r${m.v}">${RATES[m.v].t}</span>`}</li>`).join("")}</ul>`:`<div class="sub">Todos los puntos están en Bien o Muy bien.</div>`}`;
   }
   store.set(DRAFT,s);
 }
@@ -358,21 +396,34 @@ function buildPdf(s,r){
   doc.setTextColor(...COL);doc.setFontSize(9);doc.text("NIVEL "+r.level,M+29,y+10);
   doc.setTextColor(...ink);doc.setFontSize(14);doc.text(LEVELS[r.level].t,M+29,y+17.5);
   doc.setFontSize(18);doc.text(r.pct+"%",W-M-5,y+13,{align:"right"});doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(...muted);
-  doc.text("Clave: "+(11-r.critMiss.length)+"/11",W-M-5,y+19.5,{align:"right"});
+  doc.text("Clave en Bien o más: "+(r.critTotal-r.critMiss.length)+"/"+r.critTotal,W-M-5,y+19.5,{align:"right"});
   y+=34;
   // Reflexión
   head("Reflexión");reflexion(s,r).forEach(p=>para(p,10.5,ink,"normal",3));
   // Por área
   head("Resultado por área");
   r.areas.forEach(a=>{ensure(11);doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...ink);doc.text(a.t,M,y);
-    doc.setFont("helvetica","bold");doc.text(a.pct+"%",W-M,y,{align:"right"});y+=2.5;
+    doc.setFont("helvetica","bold");if(a.pct===null)doc.setTextColor(...muted);doc.text(pctTxt(a.pct),W-M,y,{align:"right"});y+=2.5;
     doc.setFillColor(...line);doc.roundedRect(M,y,CW,2.2,1.1,1.1,"F");if(a.pct>0){doc.setFillColor(...COL);doc.roundedRect(M,y,Math.max(2.2,CW*a.pct/100),2.2,1.1,1.1,"F")}y+=8});
+  if(r.naCount)para(r.naCount+(r.naCount===1?" punto marcado":" puntos marcados")+" como No aplica, fuera del cálculo.",9,muted,"normal",2);
   // Lo que le falta
-  if(r.missing.length){head("Lo que le falta ("+r.missing.length+")");
-    [...r.missing.filter(m=>m.crit),...r.missing.filter(m=>!m.crit)].forEach(m=>{
-      const ls=doc.splitTextToSize(m.t+(m.crit?"  [CLAVE]":""),CW-6);ensure(ls.length*4.8+1);
-      doc.setFont("helvetica",m.crit?"bold":"normal");doc.setFontSize(10);doc.setTextColor(...(m.crit?ink:muted));
+  const RC=[[220,61,46],[226,102,42],[217,138,0],[79,159,51],[22,163,91]];
+  const ratingTag=(v,yy)=>{const t=rateTxt(v),c=(v===undefined||v===NA)?[150,158,172]:RC[v];doc.setFont("helvetica","bold");doc.setFontSize(8.5);
+    const w=doc.getTextWidth(t)+4;doc.setFillColor(...c);doc.roundedRect(W-M-w,yy-3.4,w,4.6,1.2,1.2,"F");doc.setTextColor(255,255,255);doc.text(t,W-M-w/2,yy,{align:"center"})};
+  if(r.missing.length){head("Lo que le falta reforzar ("+r.missing.length+")");
+    para("Puntos calificados bajo Bien.",9,muted,"normal",1.5);
+    sortMiss(r.missing).forEach(m=>{
+      const ls=doc.splitTextToSize(m.t+(m.crit?"  [CLAVE]":""),CW-32);ensure(ls.length*4.8+1);
+      doc.setFont("helvetica",m.crit?"bold":"normal");doc.setFontSize(10);doc.setTextColor(...ink);
+      ratingTag(m.v,y);doc.setFont("helvetica",m.crit?"bold":"normal");doc.setFontSize(10);doc.setTextColor(...ink);
       doc.text("•",M+1,y);ls.forEach(l=>{doc.text(l,M+6,y);y+=4.8});y+=0.8})}
+  // Detalle completo
+  head("Detalle de la evaluación");
+  const vals=valsOf(s);
+  AREAS.forEach(a=>{ensure(12);doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(...ink);doc.text(a.t,M,y);y+=5.5;
+    a.items.forEach((it,i)=>{const v=vals["c-"+a.id+"-"+i];const ls=doc.splitTextToSize(it[0]+(it[1]?"  [CLAVE]":""),CW-36);ensure(ls.length*4.4+1.5);
+      ratingTag(v,y);doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(...muted);
+      ls.forEach(l=>{doc.text(l,M+4,y);y+=4.4});y+=1.2});y+=2.5});
   if(s.obs){head("Observaciones");para(s.obs)}
   // Firma
   ensure(30);y=Math.max(y+14,y);doc.setDrawColor(...muted);doc.setLineWidth(.3);doc.line(M,y+10,M+70,y+10);doc.line(W-M-70,y+10,W-M,y+10);
@@ -393,7 +444,11 @@ $("btnPdf").onclick=()=>{
   const s=readForm(),r=evaluate(s);
   if(!s.nombre){toast("Escriba el nombre del trabajador antes de terminar.");$("nombre").focus();return}
   if(!s.cargo){toast("Escriba el cargo actual antes de terminar.");$("cargo").focus();return}
-  if(!r.total){toast("Marque al menos un punto antes de terminar.");return}
+  if(r.total<TOTAL){
+    const vals=s.vals;let first=null;
+    document.querySelectorAll('.item').forEach(f=>{const miss=vals[f.id.slice(2)]===undefined;f.classList.toggle("flag",miss);if(miss&&!first)first=f});
+    toast("Faltan "+(TOTAL-r.total)+" puntos por calificar. Están marcados como Sin responder.");
+    if(first)first.scrollIntoView({behavior:"smooth",block:"center"});return}
   saveRecord(s);
   if(!window.jspdf){toast("No se pudo cargar el generador de PDF. Revise la conexión a internet e intente de nuevo.");return}
   try{buildPdf(s,r).save(fileName(s));toast("Evaluación guardada y PDF descargado.")}
