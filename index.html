@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Evaluación de Cuadrilla</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: estilo SaaS claro — nav fija, hero con titular grande y panel tipo dashboard, tarjetas redondeadas en una columna */
+:root{
+  --bg:#f7f8fb; --surface:#ffffff; --surface-2:#f2f4f8; --fg:#0f1624; --muted:#606b7d; --line:#e4e7ee;
+  --ink:#0f1624; --ink-fg:#ffffff;
+  --accent:#2f6bff; --accent-soft:#e8efff; --glow-a:#c9dbff; --glow-b:#d6f5ea;
+  --l1:#16a35b; --l1s:#e3f6ec; --l2:#2f6bff; --l2s:#e8efff; --l3:#d98a00; --l3s:#fdf2dc; --l4:#dc3d2e; --l4s:#fce6e3;
+  --shadow:0 1px 2px rgba(15,22,36,.04),0 8px 24px rgba(15,22,36,.06);
+  --display:"Inter Tight","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b0f17; --surface:#131925; --surface-2:#1a2130; --fg:#e8ecf3; --muted:#98a2b3; --line:#252d3c;
+  --ink:#e8ecf3; --ink-fg:#0b0f17;
+  --accent:#6d9bff; --accent-soft:#18233b; --glow-a:#1c2c52; --glow-b:#12352a;
+  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0b0f17; --surface:#131925; --surface-2:#1a2130; --fg:#e8ecf3; --muted:#98a2b3; --line:#252d3c;
+  --ink:#e8ecf3; --ink-fg:#0b0f17;
+  --accent:#6d9bff; --accent-soft:#18233b; --glow-a:#1c2c52; --glow-b:#12352a;
+  --l1:#3fcf86; --l1s:#122b1e; --l2:#6d9bff; --l2s:#18233b; --l3:#f0b23e; --l3s:#30250f; --l4:#f26b5d; --l4s:#371916;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.02em;line-height:1.1}
+
+/* Nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.brand{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-weight:700;font-family:var(--display);letter-spacing:-.01em}
+.brand .dot{width:26px;height:26px;border-radius:8px;background:var(--ink);display:grid;place-items:center;color:var(--ink-fg);font-size:13px}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);letter-spacing:0}
+.pill-live{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pill-live b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--lv,var(--surface-2));color:var(--lvf,var(--muted));font-size:13px}
+
+/* Hero */
+.hero{position:relative;padding-block:44px 8px;text-align:left}
+.hero::before{content:"";position:absolute;inset:-40px -20% auto;height:340px;z-index:-1;pointer-events:none;
+  background:radial-gradient(40% 60% at 25% 40%,var(--glow-a),transparent 70%),radial-gradient(35% 55% at 75% 30%,var(--glow-b),transparent 70%);opacity:.9}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted);box-shadow:var(--shadow)}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--l1)}
+.hero h1{font-size:clamp(34px,7vw,52px);font-weight:800;margin-top:16px;max-width:15ch}
+.hero p{color:var(--muted);font-size:17px;max-width:52ch;margin:14px 0 0}
+
+main{display:flex;flex-direction:column;gap:18px;padding-block:24px 56px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.card h2{font-size:20px;font-weight:700}
+.hint{color:var(--muted);font-size:14px;margin:4px 0 0}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* Panel dashboard de niveles */
+.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.step{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px;transition:background .2s,border-color .2s}
+.step .n{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-family:var(--display);color:#fff;background:var(--c)}
+.step strong{font-size:13.5px;line-height:1.25}
+.step.on{background:var(--cs);border-color:var(--c);box-shadow:0 0 0 1px var(--c) inset}
+.s1{--c:var(--l1);--cs:var(--l1s)} .s2{--c:var(--l2);--cs:var(--l2s)} .s3{--c:var(--l3);--cs:var(--l3s)} .s4{--c:var(--l4);--cs:var(--l4s)}
+.meter{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:14px}
+.meter i{display:block;height:100%;width:0;border-radius:99px;background:var(--lv,var(--accent));transition:width .3s ease}
+.meter-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+
+/* Formulario */
+.fields{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:14px}
+.fields .full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+input[type=text],input[type=date],textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;width:100%;min-width:0}
+textarea{min-height:84px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Áreas */
+.area-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.area-head .meta{min-width:0}
+.chip{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.bar{height:6px;border-radius:99px;background:var(--surface-2);margin:14px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:var(--accent);transition:width .25s ease}
+.items{list-style:none;margin:0;padding:0}
+.item+.item{border-top:1px solid var(--line)}
+.item label{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;padding:13px 2px;cursor:pointer}
+.item input{position:absolute;opacity:0;pointer-events:none}
+.box{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface-2);display:grid;place-items:center;transition:background .15s,border-color .15s}
+.box svg{width:15px;height:15px;opacity:0;stroke:#fff}
+.item input:checked+.box{background:var(--accent);border-color:var(--accent)}
+.item input:checked+.box svg{opacity:1}
+.item input:focus-visible+.box{outline:2px solid var(--accent);outline-offset:2px}
+.txt{font-size:15px;padding-top:2px}
+.req{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--l3);background:var(--l3s);border-radius:6px;padding:1px 6px;vertical-align:1px}
+
+/* Resultado */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface-2)}
+.stat .v{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat .k{font-size:12px;color:var(--muted);font-weight:600}
+.verdict{margin-top:10px;border-radius:14px;padding:14px 16px;background:var(--lvs);border:1px solid var(--lv)}
+.verdict h3{font-size:20px;color:var(--fg)}
+.verdict .lvl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--lv)}
+.sub{font-family:var(--display);font-weight:700;font-size:16px;margin-top:20px}
+.breakdown{display:grid;gap:10px;margin-top:10px}
+.brow{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:2px 10px;align-items:center;font-size:14px}
+.brow .bar{grid-column:1/-1;margin:0}
+.brow em{font-style:normal;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.reflex{margin-top:10px;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.reflex p{margin:0;max-width:66ch}
+.reflex b{font-weight:600}
+.missing{margin:10px 0 0;padding-left:20px;font-size:14.5px;display:flex;flex-direction:column;gap:4px}
+.empty{color:var(--muted);font-size:14.5px;margin:14px 0 0;padding:16px;border:1px dashed var(--line);border-radius:14px;background:var(--surface-2)}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+button{font:inherit;font-weight:600;font-size:15px;border-radius:999px;padding:11px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+button.primary{background:var(--ink);border-color:var(--ink);color:var(--ink-fg)}
+button.danger{border-color:var(--l4);color:var(--l4)}
+.toast{margin-top:10px;font-size:14px;font-weight:600;color:var(--l1);min-height:1.2em}
+
+.list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rec{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+.rec .n{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--c)}
+.rec strong{display:block;overflow-wrap:anywhere}
+.rec small{color:var(--muted);font-size:13px}
+.rec .btns{display:flex;gap:6px}
+.rec button{padding:7px 12px;font-size:13px}
+footer{color:var(--muted);font-size:13px;padding-block:0 32px}
+
+@media (max-width:560px){
+  .ladder{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fields{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stat .v{font-size:22px}
+  .rec{grid-template-columns:36px minmax(0,1fr)}
+  .rec .btns{grid-column:1/-1}
+  .brand small{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="dot">PV2</span><div>Evaluación de Cuadrilla<small>Fluor · Proyecto DMC PV2</small></div></div>
+    <div class="pill-live"><b id="liveN">–</b><span id="livePct">Sin marcar</span></div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="badge"><i></i>Evaluación de desempeño en terreno</span>
+    <h1>¿Está listo para subir de cargo?</h1>
+    <p>Escriba el nombre, marque lo que el trabajador cumple hoy y la evaluación entrega su nivel, una reflexión de cómo es y lo que le falta. Al terminar se descarga en PDF.</p>
+  </header>
+
+<main>
+  <section class="card">
+    <div class="dash-head"><div><div class="kicker">Escala</div><h2>Las 4 etapas</h2></div><span class="chip" id="dashChip">0 de 27 puntos</span></div>
+    <div class="ladder" id="ladder"></div>
+    <div class="meter"><i id="meter"></i></div>
+    <div class="meter-lbl"><span>0%</span><span>40%</span><span>65%</span><span>85%</span><span>100%</span></div>
+  </section>
+
+  <section class="card">
+    <div class="kicker">Paso 1</div>
+    <h2>Datos del trabajador</h2>
+    <div class="fields">
+      <label class="f">Nombre del trabajador<input type="text" id="nombre" placeholder="Nombre y apellido" autocomplete="off"></label>
+      <label class="f">Fecha<input type="date" id="fecha"></label>
+      <label class="f full">Cargo actual<input type="text" id="cargo" placeholder="Escriba el cargo actual" autocomplete="off"></label>
+    </div>
+  </section>
+
+  <div class="kicker" style="margin-top:6px">Paso 2 · Marque lo que cumple</div>
+  <div id="areas" style="display:flex;flex-direction:column;gap:18px"></div>
+
+  <section class="card" id="resultado">
+    <div class="kicker">Paso 3</div>
+    <h2>Resultado</h2>
+    <div id="resCard"></div>
+    <label class="f" style="margin-top:18px">Observaciones (opcional)<textarea id="obs" placeholder="Comentarios, fortalezas, compromisos de mejora…"></textarea></label>
+    <div class="actions">
+      <button class="primary" id="btnPdf" type="button">Terminar y descargar PDF</button>
+      <button id="btnNew" type="button">Nueva evaluación</button>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+  </section>
+
+  <section class="card">
+    <div class="kicker">Historial</div>
+    <h2>Evaluaciones realizadas</h2>
+    <p class="hint">Se guardan en este teléfono o computador al descargar el PDF.</p>
+    <ul class="list" id="list"></ul>
+  </section>
+</main>
+<footer>Fluor · Proyecto DMC PV2 · Área Acopio Fino</footer>
+</div>
+
+<script>
+const LEVELS={
+  1:{t:"Preparado para subir de cargo",d:"85% o más y todos los puntos clave"},
+  2:{t:"Buen elemento, pero aún falta",d:"65% a 84%, o le falta un punto clave"},
+  3:{t:"Lo intenta, pero aún falta",d:"40% a 64%"},
+  4:{t:"Falta esforzarse",d:"Menos de 40%"}
+};
+const AREAS=[
+ {id:"act",t:"Actitud: vocación, empatía y compromiso",d:"Cómo se para frente al trabajo y a sus compañeros.",
+  fuerte:"es una persona comprometida, con vocación y buena disposición con sus compañeros",
+  falta:"conversar con él sobre compromiso y asistencia, y darle tareas con responsabilidad propia para ver cómo responde",
+  items:[["Tiene vocación: le gusta su oficio y busca aprender más",1],["Es empático: escucha, respeta y apoya a sus compañeros",0],["Es comprometido: cumple asistencia y horario sin faltas injustificadas",1],["Termina lo que se le asigna sin que haya que estar encima",0],["Mantiene buena actitud ante cambios, presión o trabajos difíciles",0]]},
+ {id:"seg",t:"Seguridad",d:"Base para cualquier cargo con gente a cargo.",
+  fuerte:"trabaja de forma segura y respeta los estándares",
+  falta:"reforzar la seguridad antes que cualquier ascenso, acompañándolo en la ART y las charlas hasta que lo haga por convicción",
+  items:[["Usa el EPP correcto y cumple los estándares sin que se lo recuerden",1],["Hace la ART y la charla de 5 minutos con conciencia, no solo para firmar",1],["Detiene el trabajo cuando ve una condición o acto inseguro",1],["Mantiene orden y aseo en su frente de trabajo",0]]},
+ {id:"tec",t:"Dominio de lo que sabe",d:"Conocimiento de terreno en su especialidad.",
+  fuerte:"domina su oficio en terreno y hace el trabajo con calidad",
+  falta:"ponerlo junto a un maestro con experiencia en las tareas donde todavía falla, para que gane dominio técnico",
+  items:[["Domina su oficio: sabe hacer el trabajo bien y a la primera",1],["Usa correctamente herramientas y equipos (torque, tirfor, tecles, porta power, etc.)",0],["Conoce maniobras de izaje y revisa elementos (grilletes, eslingas, tecles)",0],["Resuelve problemas en terreno sin depender siempre del capataz",0],["Su trabajo tiene calidad: no hay que rehacerlo",0]]},
+ {id:"pla",t:"Planos e ingeniería",d:"Pasar del papel al terreno.",
+  fuerte:"entiende la ingeniería y sabe pasar del plano al terreno",
+  falta:"entregarle el plano de la tarea del día para que ubique tags, ejes y cotas con apoyo, hasta que lo haga solo",
+  items:[["Sabe leer planos: vistas, cotas, elevaciones y ejes",1],["Ubica en terreno tags, piezas y elementos a partir del plano",0],["Entiende listas de materiales (BOM) y especificaciones de montaje",0],["Detecta diferencias entre el plano y lo que hay en terreno, y las informa",0]]},
+ {id:"lid",t:"Liderazgo y pedagogía",d:"Complementar el conocimiento de terreno con la capacidad de enseñar.",
+  fuerte:"tiene llegada con sus compañeros y sabe enseñar lo que sabe",
+  falta:"asignarle un ayudante o un trabajador nuevo para que le enseñe, y así desarrollar su liderazgo",
+  items:[["Es un líder: los compañeros lo siguen y lo respetan",1],["Transmite lo que sabe con paciencia y enseña a los nuevos",1],["Explica el paso a paso de una tarea de forma clara (terreno + pedagogía)",0],["Organiza y reparte tareas cuando se le pide",0],["Da el ejemplo con su conducta, incluso cuando no lo están mirando",0]]},
+ {id:"com",t:"Comunicación y documentos",d:"Lo que se necesita para trabajar con jefatura.",
+  fuerte:"se comunica bien con la jefatura y maneja la documentación",
+  falta:"pedirle que explique el avance al cierre del turno y que llene una ART o reporte con apoyo",
+  items:[["Sabe explicarle a un jefe lo que se está realizando: avance, problemas y lo que falta",1],["Sabe hacer documentos: ART, permisos, check-list, reportes",1],["Informa a tiempo atrasos, faltas de material o incidentes",0],["Maneja lo básico digital: celular, correo, WhatsApp de trabajo, Excel simple",0]]}
+];
+const TOTAL=AREAS.reduce((n,a)=>n+a.items.length,0);
+const KEY="evalCuadrilla.v2", DRAFT="evalCuadrilla.draft.v2";
+const $=id=>document.getElementById(id);
+const store={get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const check='<svg viewBox="0 0 16 16" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+
+$("ladder").innerHTML=[4,3,2,1].map(n=>`<div class="step s${n}" id="step${n}"><span class="n">${n}</span><strong>${LEVELS[n].t}</strong><span class="hint" style="margin:0;font-size:12px">${LEVELS[n].d}</span></div>`).join("");
+$("areas").innerHTML=AREAS.map(a=>`
+ <section class="card">
+  <div class="area-head"><div class="meta"><h2>${a.t}</h2><p class="hint">${a.d}</p></div><span class="chip" id="sc-${a.id}">0/${a.items.length}</span></div>
+  <div class="bar"><i id="bar-${a.id}"></i></div>
+  <ul class="items">${a.items.map((it,i)=>`<li class="item"><label for="c-${a.id}-${i}"><input type="checkbox" id="c-${a.id}-${i}"><span class="box">${check}</span><span class="txt">${it[0]}${it[1]?'<span class="req">Clave</span>':''}</span></label></li>`).join("")}</ul>
+ </section>`).join("");
+
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function fmtDate(f){if(!f)return"";const[y,m,d]=f.split("-");return d+"-"+m+"-"+y}
+function readForm(){const checks={};document.querySelectorAll('.item input').forEach(c=>{if(c.checked)checks[c.id]=true});
+  return{nombre:$("nombre").value.trim(),cargo:$("cargo").value.trim(),fecha:$("fecha").value,obs:$("obs").value.trim(),checks}}
+function writeForm(s){$("nombre").value=s.nombre||"";$("cargo").value=s.cargo||"";$("fecha").value=s.fecha||today();$("obs").value=s.obs||"";
+  document.querySelectorAll('.item input').forEach(c=>c.checked=!!(s.checks&&s.checks[c.id]))}
+
+/* Cada punto vale 1; los puntos clave valen 2 */
+function evaluate(s){
+  let pts=0,max=0,total=0;const areas=[],missing=[];
+  AREAS.forEach(a=>{let ap=0,am=0,ok=0;
+    a.items.forEach((it,i)=>{const w=it[1]?2:1,on=!!s.checks["c-"+a.id+"-"+i];am+=w;if(on){ap+=w;ok++;total++}else missing.push({t:it[0],crit:!!it[1],area:a.id})});
+    pts+=ap;max+=am;areas.push({...a,ok,n:a.items.length,pct:Math.round(ap/am*100)})});
+  const pct=Math.round(pts/max*100),critMiss=missing.filter(m=>m.crit);
+  const level=pct>=85?(critMiss.length?2:1):pct>=65?2:pct>=40?3:4;
+  return{pct,level,areas,missing,critMiss,total};
+}
+function joinY(arr){return arr.length<2?arr.join(""):arr.slice(0,-1).join(", ")+" y "+arr[arr.length-1]}
+function lc(t){return t.charAt(0).toLowerCase()+t.slice(1)}
+
+/* Reflexión automática: cómo es, por qué está en ese nivel, qué le falta */
+function reflexion(s,r){
+  const nom=s.nombre||"El trabajador";
+  const sorted=[...r.areas].sort((a,b)=>b.pct-a.pct);
+  const strong=sorted.filter(a=>a.pct>=75), weak=sorted.filter(a=>a.pct<50).reverse();
+  const P=[];
+  // 1. Cómo es
+  if(strong.length){
+    P.push(`${nom} ${strong.slice(0,2).map(a=>a.fuerte).join(", y además ")}. Sus áreas más fuertes son ${joinY(strong.slice(0,3).map(a=>lc(a.t.split(":")[0])))}.`);
+  }else{
+    P.push(`${nom} todavía no destaca con claridad en ninguna de las áreas evaluadas; su mejor resultado está en ${lc(sorted[0].t.split(":")[0])} (${sorted[0].pct}%).`);
+  }
+  // 2. Por qué está en ese nivel
+  const weakNames=weak.map(a=>lc(a.t.split(":")[0]));
+  if(r.level===1) P.push(`Está en el nivel 1 porque cumple el ${r.pct}% de la evaluación y todos los puntos clave. Tiene la base técnica, la actitud y la capacidad de guiar a otros que se espera para asumir más responsabilidad.`);
+  else if(r.level===2&&r.pct>=85) P.push(`Su puntaje es alto (${r.pct}%), pero queda en el nivel 2 porque le ${r.critMiss.length===1?"falta un punto clave":"faltan "+r.critMiss.length+" puntos clave"}: ${joinY(r.critMiss.map(m=>lc(m.t.split(":")[0])))}. Sin eso no está listo para subir de cargo.`);
+  else if(r.level===2) P.push(`Está en el nivel 2 (${r.pct}%) porque cumple la mayor parte de lo evaluado, pero ${weakNames.length?"sus resultados en "+joinY(weakNames)+" bajan el promedio":"todavía le faltan algunos puntos en varias áreas"}${r.critMiss.length?" y le faltan "+r.critMiss.length+" puntos clave":""}.`);
+  else if(r.level===3) P.push(`Está en el nivel 3 (${r.pct}%) porque tiene una base y muestra intención, pero aún hay vacíos importantes${weakNames.length?" en "+joinY(weakNames):""}. Le faltan ${r.critMiss.length} de los 11 puntos clave.`);
+  else P.push(`Está en el nivel 4 (${r.pct}%) porque cumple pocos de los puntos evaluados${weakNames.length?", sobre todo en "+joinY(weakNames):""}. Hoy necesita demostrar más compromiso y esfuerzo antes de pensar en un cambio de cargo.`);
+  // 3. Qué le falta
+  if(r.level===1) P.push(`Recomendación: darle la oportunidad de subir de cargo, con seguimiento las primeras semanas.`);
+  else{
+    const foco=(weak.length?weak:sorted.slice(-2).reverse()).slice(0,2);
+    P.push(`Para avanzar, lo más importante es ${foco.map(a=>a.falta).join("; además, ")}.`);
+  }
+  return P;
+}
+
+function lvVars(n){return{1:["--l1","--l1s"],2:["--l2","--l2s"],3:["--l3","--l3s"],4:["--l4","--l4s"]}[n]}
+function render(){
+  const s=readForm(),r=evaluate(s),started=r.total>0,root=document.documentElement.style;
+  if(started){const[v,vs]=lvVars(r.level);root.setProperty("--lv",`var(${v})`);root.setProperty("--lvs",`var(${vs})`);root.setProperty("--lvf","#fff")}
+  else{root.removeProperty("--lv");root.removeProperty("--lvs");root.removeProperty("--lvf")}
+  $("liveN").textContent=started?r.level:"–";
+  $("livePct").textContent=started?"Nivel "+r.level+" · "+r.pct+"%":"Sin marcar";
+  $("meter").style.width=r.pct+"%";
+  $("dashChip").textContent=r.total+" de "+TOTAL+" puntos";
+  [1,2,3,4].forEach(n=>$("step"+n).classList.toggle("on",started&&n===r.level));
+  r.areas.forEach(a=>{$("sc-"+a.id).textContent=a.ok+"/"+a.n;$("bar-"+a.id).style.width=a.pct+"%"});
+  if(!started){$("resCard").innerHTML='<p class="empty">Marque los puntos que el trabajador cumple. Aquí aparecerá su nivel, el detalle por área, una reflexión de cómo es y lo que le falta.</p>'}
+  else{
+    $("resCard").innerHTML=`
+     <div class="stats">
+      <div class="stat"><div class="v" style="color:var(--lv)">${r.level}</div><div class="k">Nivel</div></div>
+      <div class="stat"><div class="v">${r.pct}%</div><div class="k">Cumplimiento</div></div>
+      <div class="stat"><div class="v">${11-r.critMiss.length}/11</div><div class="k">Puntos clave</div></div>
+     </div>
+     <div class="verdict"><div class="lvl">Nivel ${r.level}</div><h3>${LEVELS[r.level].t}</h3></div>
+     <div class="sub">Reflexión</div>
+     <div class="reflex">${reflexion(s,r).map(p=>`<p>${esc(p)}</p>`).join("")}</div>
+     <div class="sub">Por área</div>
+     <div class="breakdown">${r.areas.map(a=>`<div class="brow"><span>${a.t}</span><em>${a.pct}%</em><div class="bar"><i style="width:${a.pct}%"></i></div></div>`).join("")}</div>
+     ${r.missing.length?`<div class="sub">Lo que le falta (${r.missing.length})</div><ul class="missing">${r.missing.filter(m=>m.crit).map(m=>`<li><b>${m.t}</b> <span class="req">Clave</span></li>`).join("")}${r.missing.filter(m=>!m.crit).map(m=>`<li>${m.t}</li>`).join("")}</ul>`:`<div class="sub">Cumple todos los puntos evaluados.</div>`}`;
+  }
+  store.set(DRAFT,s);
+}
+let toastT;function toast(m){$("toast").textContent=m;clearTimeout(toastT);toastT=setTimeout(()=>$("toast").textContent="",4000)}
+
+/* PDF */
+function buildPdf(s,r){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,M=16,CW=W-2*M;let y=0;
+  const COL={1:[22,163,91],2:[47,107,255],3:[217,138,0],4:[220,61,46]}[r.level];
+  const ink=[15,22,36],muted=[96,107,125],line=[228,231,238];
+  const ensure=h=>{if(y+h>282){doc.addPage();y=18}};
+  const para=(t,size=10.5,color=ink,style="normal",gap=1.5)=>{doc.setFont("helvetica",style);doc.setFontSize(size);doc.setTextColor(...color);
+    doc.splitTextToSize(t,CW).forEach(l=>{ensure(size*.45);doc.text(l,M,y);y+=size*.45});y+=gap};
+  const head=t=>{ensure(14);y+=3;doc.setFont("helvetica","bold");doc.setFontSize(12.5);doc.setTextColor(...ink);doc.text(t,M,y);y+=2.5;doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=6};
+  // Encabezado
+  doc.setFillColor(...ink);doc.rect(0,0,W,30,"F");
+  doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(18);doc.text("Evaluación de Trabajador",M,15);
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(200,207,220);doc.text("Fluor · Proyecto DMC PV2",M,22);
+  doc.text(fmtDate(s.fecha),W-M,22,{align:"right"});
+  y=42;
+  // Datos
+  doc.setFontSize(9);doc.setTextColor(...muted);doc.setFont("helvetica","bold");doc.text("TRABAJADOR",M,y);doc.text("CARGO ACTUAL",M+CW*0.58,y);y+=6;
+  doc.setFontSize(13);doc.setTextColor(...ink);doc.text(doc.splitTextToSize(s.nombre||"—",CW*0.55)[0],M,y);doc.text(doc.splitTextToSize(s.cargo||"—",CW*0.42)[0],M+CW*0.58,y);y+=10;
+  // Caja de nivel
+  doc.setFillColor(...COL.map(c=>Math.round(c+(255-c)*0.88)));doc.setDrawColor(...COL);doc.setLineWidth(.6);doc.roundedRect(M,y,CW,26,3,3,"FD");
+  doc.setFillColor(...COL);doc.roundedRect(M+5,y+4,18,18,2.5,2.5,"F");doc.setTextColor(255,255,255);doc.setFontSize(20);doc.text(String(r.level),M+14,y+16.5,{align:"center"});
+  doc.setTextColor(...COL);doc.setFontSize(9);doc.text("NIVEL "+r.level,M+29,y+10);
+  doc.setTextColor(...ink);doc.setFontSize(14);doc.text(LEVELS[r.level].t,M+29,y+17.5);
+  doc.setFontSize(18);doc.text(r.pct+"%",W-M-5,y+13,{align:"right"});doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(...muted);
+  doc.text("Clave: "+(11-r.critMiss.length)+"/11",W-M-5,y+19.5,{align:"right"});
+  y+=34;
+  // Reflexión
+  head("Reflexión");reflexion(s,r).forEach(p=>para(p,10.5,ink,"normal",3));
+  // Por área
+  head("Resultado por área");
+  r.areas.forEach(a=>{ensure(11);doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...ink);doc.text(a.t,M,y);
+    doc.setFont("helvetica","bold");doc.text(a.pct+"%",W-M,y,{align:"right"});y+=2.5;
+    doc.setFillColor(...line);doc.roundedRect(M,y,CW,2.2,1.1,1.1,"F");if(a.pct>0){doc.setFillColor(...COL);doc.roundedRect(M,y,Math.max(2.2,CW*a.pct/100),2.2,1.1,1.1,"F")}y+=8});
+  // Lo que le falta
+  if(r.missing.length){head("Lo que le falta ("+r.missing.length+")");
+    [...r.missing.filter(m=>m.crit),...r.missing.filter(m=>!m.crit)].forEach(m=>{
+      const ls=doc.splitTextToSize(m.t+(m.crit?"  [CLAVE]":""),CW-6);ensure(ls.length*4.8+1);
+      doc.setFont("helvetica",m.crit?"bold":"normal");doc.setFontSize(10);doc.setTextColor(...(m.crit?ink:muted));
+      doc.text("•",M+1,y);ls.forEach(l=>{doc.text(l,M+6,y);y+=4.8});y+=0.8})}
+  if(s.obs){head("Observaciones");para(s.obs)}
+  // Firma
+  ensure(30);y=Math.max(y+14,y);doc.setDrawColor(...muted);doc.setLineWidth(.3);doc.line(M,y+10,M+70,y+10);doc.line(W-M-70,y+10,W-M,y+10);
+  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(...muted);doc.text("Firma evaluador",M,y+15);doc.text("Firma trabajador",W-M-70,y+15);
+  const pages=doc.getNumberOfPages();for(let i=1;i<=pages;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(...muted);
+    doc.text("Escala: 4 Falta esforzarse · 3 Lo intenta, pero aún falta · 2 Buen elemento, pero aún falta · 1 Preparado para subir de cargo",M,290);
+    doc.text(i+"/"+pages,W-M,290,{align:"right"})}
+  return doc;
+}
+function fileName(s){const n=(s.nombre||"trabajador").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"");return "Evaluacion_"+n+"_"+fmtDate(s.fecha)+".pdf"}
+
+let currentId=null,pendingDel=null,pendingNew=false;
+function saveRecord(s){const recs=store.get(KEY,[]);
+  if(currentId){const i=recs.findIndex(x=>x.id===currentId);if(i>=0)recs[i]={...s,id:currentId};else recs.unshift({...s,id:currentId})}
+  else{currentId=Date.now().toString(36);recs.unshift({...s,id:currentId})}store.set(KEY,recs);renderList()}
+
+$("btnPdf").onclick=()=>{
+  const s=readForm(),r=evaluate(s);
+  if(!s.nombre){toast("Escriba el nombre del trabajador antes de terminar.");$("nombre").focus();return}
+  if(!s.cargo){toast("Escriba el cargo actual antes de terminar.");$("cargo").focus();return}
+  if(!r.total){toast("Marque al menos un punto antes de terminar.");return}
+  saveRecord(s);
+  if(!window.jspdf){toast("No se pudo cargar el generador de PDF. Revise la conexión a internet e intente de nuevo.");return}
+  try{buildPdf(s,r).save(fileName(s));toast("Evaluación guardada y PDF descargado.")}
+  catch(e){toast("No se pudo descargar el PDF en esta vista. Ábrala desde el enlace de GitHub.")}
+};
+$("btnNew").onclick=()=>{
+  const b=$("btnNew");
+  if(!pendingNew){pendingNew=true;b.textContent="¿Borrar formulario?";b.classList.add("danger");setTimeout(()=>{pendingNew=false;b.textContent="Nueva evaluación";b.classList.remove("danger")},4000);return}
+  pendingNew=false;b.textContent="Nueva evaluación";b.classList.remove("danger");
+  currentId=null;writeForm({});render();window.scrollTo({top:0,behavior:"smooth"});$("nombre").focus();
+};
+function renderList(){
+  const recs=store.get(KEY,[]);
+  if(!recs.length){$("list").innerHTML='<li class="empty">Todavía no hay evaluaciones. Al descargar el PDF, la evaluación queda guardada aquí.</li>';return}
+  $("list").innerHTML=recs.map(x=>{const r=evaluate(x);return`<li class="rec s${r.level}"><span class="n">${r.level}</span>
+   <div style="min-width:0"><strong>${esc(x.nombre||"Sin nombre")}</strong><small>${esc(x.cargo||"")} · ${r.pct}% · ${fmtDate(x.fecha)}</small></div>
+   <div class="btns"><button type="button" data-pdf="${x.id}">PDF</button><button type="button" data-open="${x.id}">Abrir</button><button type="button" class="${pendingDel===x.id?'danger':''}" data-del="${x.id}">${pendingDel===x.id?'¿Eliminar?':'Eliminar'}</button></div></li>`}).join("");
+}
+$("list").onclick=e=>{
+  const o=e.target.closest("[data-open]"),d=e.target.closest("[data-del]"),p=e.target.closest("[data-pdf]");const recs=store.get(KEY,[]);
+  if(o){const x=recs.find(r=>r.id===o.dataset.open);if(x){currentId=x.id;writeForm(x);render();window.scrollTo({top:0,behavior:"smooth"})}}
+  if(p){const x=recs.find(r=>r.id===p.dataset.pdf);if(x&&window.jspdf){try{buildPdf(x,evaluate(x)).save(fileName(x))}catch(err){toast("No se pudo descargar el PDF en esta vista.")}}}
+  if(d){const id=d.dataset.del;
+    if(pendingDel!==id){pendingDel=id;renderList();setTimeout(()=>{if(pendingDel===id){pendingDel=null;renderList()}},4000);return}
+    pendingDel=null;store.set(KEY,recs.filter(r=>r.id!==id));if(currentId===id)currentId=null;renderList();toast("Evaluación eliminada.")}
+};
+document.addEventListener("input",render);document.addEventListener("change",render);
+writeForm(store.get(DRAFT,{fecha:today()}));render();renderList();
+</script>
+
+</body>
+</html>
